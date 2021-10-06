@@ -5,14 +5,6 @@ import torch
 from torch import nn, matmul
 from torch import functional as F
 
-def sanity(x, expected_size, note=None):
-    enabled = False
-    if not enabled:
-        return
-    print(f'Expected size of {expected_size}, got size of {x.shape}')
-    if note is not None:
-        print('  ' + str(note))
-
 def scaled_dot_product_attention(q, k, v):
     scale = q.size(-1) ** -0.5
     scores = nn.functional.softmax(q.bmm(k.transpose(1, 2)) * scale, dim=-1)
@@ -97,28 +89,24 @@ class TransformerEncoder(nn.Module):
         self.norm = LayerNorm(d_model)
         self.attention_pool = nn.Linear(d_model, 1)
         self.classifier = nn.Sequential(
-            #nn.Linear(d_model, d_model),
-            #nn.ReLU(),
+            nn.Linear(d_model, d_model),
+            nn.ReLU(),
             nn.Linear(d_model, n_classes),
         )
 
     def forward(self, x):
-        sanity(x, ('bs', 'c', 'h', 'w'))
         x = self.embed(x).transpose(-2, -1)
-        sanity(x, ('bs', 'n', 'd_model'))
-        # Skip position embedding for now since this model doesn't strictly need it.
+        # Skip position embedding since this model doesn't strictly need it.
+        # Should be shape (batch_size, seq_len, d_model)
         for layer in self.layers:
             x = layer(x)
         x = self.norm(x)
-        sanity(x, ('bs', 'n', 'd_model'))
         # Should be shape (batch_size, seq_len, d_model)
         softmax = nn.functional.softmax(self.attention_pool(x), dim=1).transpose(-1, -2)
         x = softmax.bmm(x).squeeze(-2)
-        #x = matmul(nn.functional.softmax(self.attention_pool(x), dim=1).transpose(-1, -2), x).squeeze(-2)
-        sanity(x, ('bs', 'd_model'))
         # Should be shape (batch_size, d_model)
         x = self.classifier(x)
-        sanity(x, ('bs', 'n_classes'))
+        # Should be shape (batch_size, n_classes)
         return x
 
 
