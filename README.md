@@ -2,7 +2,7 @@
 Implementation of Compact Convolutional Transformer (CCT) from Escaping the Big Data Paradigm with Compact Transformers  
 https://arxiv.org/abs/2104.05704
 
-Some code borrowd from the following tutorials:  
+Some code borrowed from the following tutorials:  
 https://medium.com/pytorch/training-compact-transformers-from-scratch-in-30-minutes-with-pytorch-ff5c21668ed5
 https://medium.com/the-dl/transformers-from-scratch-in-pytorch-8777e346ca51
 https://blog.floydhub.com/the-transformer-in-pytorch/
