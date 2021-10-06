@@ -9,6 +9,7 @@ class BaseClassifierLitMod(LightningModule):
         super().__init__()
 
         self.lr = lr
+        self.lr = 2e-5
         self.wd = weight_decay
 
         self.accuracy = Accuracy()
